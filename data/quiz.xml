@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<quiz title="Cyber Safety Challenge">
-  <question><text>Which detail should you never share to approve a UPI payment?</text><option>Merchant name</option><option>UPI PIN</option><option>Invoice number</option><option>Shop name</option><answer>1</answer></question>
-  <question><text>What is a common phishing warning sign?</text><option>An official saved bookmark</option><option>A routine bank statement</option><option>A suspicious urgent link asking for credentials</option><option>A printed receipt</option><answer>2</answer></question>
-  <question><text>What is a sensible response to a deepfake-looking viral video?</text><option>Share it immediately</option><option>Trust it because it has many views</option><option>Verify the source and compare with trusted reporting</option><option>Download and edit it</option><answer>2</answer></question>
-  <question><text>Which is a typical job-scam indicator?</text><option>Clear employer identity</option><option>Upfront payment demanded to secure a job</option><option>Written job description</option><option>Official company domain</option><answer>1</answer></question>
-  <question><text>What should you do when a caller claims to be customer support and asks for your OTP?</text><option>Share it quickly</option><option>Share only half</option><option>Refuse and contact the organisation using an official channel</option><option>Post it online</option><answer>2</answer></question>
-</quiz>

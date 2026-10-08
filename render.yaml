@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: cybershield
-    runtime: docker
-    plan: free
-    healthCheckPath: /
-    autoDeploy: true

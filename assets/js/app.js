@@ -1,9 +1,0 @@
-document.addEventListener('DOMContentLoaded',()=>{
- const toggle=document.getElementById('navToggle'), nav=document.getElementById('mainNav'); if(toggle&&nav) toggle.addEventListener('click',()=>nav.classList.toggle('open'));
- document.querySelectorAll('[data-toggle-password]').forEach(btn=>btn.addEventListener('click',()=>{const input=document.getElementById(btn.dataset.togglePassword); if(!input)return; input.type=input.type==='password'?'text':'password'; btn.textContent=input.type==='password'?'Show':'Hide';}));
- document.querySelectorAll('[data-confirm]').forEach(el=>el.addEventListener('click',e=>{if(!confirm(el.dataset.confirm))e.preventDefault()}));
- const search=document.getElementById('reportSearch'); if(search){search.addEventListener('input',()=>{const q=search.value.toLowerCase();document.querySelectorAll('[data-report-row]').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');})}
- const count=document.getElementById('liveCount'); if(count){let n=1284;setInterval(()=>{n+=Math.floor(Math.random()*3);count.textContent=n.toLocaleString('en-IN')},4200)}
- const form=document.getElementById('quizForm'); if(form){const progress=document.querySelector('#quizProgress span');const qs=[...form.querySelectorAll('.question-block')];const total=qs.length;qs.forEach((q,i)=>{const inputs=q.querySelectorAll('input');inputs.forEach(inp=>inp.addEventListener('change',()=>{const answered=qs.filter(x=>x.querySelector('input:checked')).length;progress.style.width=((answered/total)*100)+'%';}));});}
- const expiry=document.getElementById('deadline'); if(expiry){const target=Date.parse(expiry.dataset.target);const tick=()=>{let d=Math.max(0,target-Date.now()),h=Math.floor(d/36e5),m=Math.floor(d%36e5/6e4),s=Math.floor(d%6e4/1e3);expiry.textContent=`${h}h ${m}m ${s}s`};tick();setInterval(tick,1000)}
-});
