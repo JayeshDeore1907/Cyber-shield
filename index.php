@@ -35,9 +35,107 @@ if ($page === 'deepfake') {
 }
 
 if ($page === 'quiz') {
-    $xml=load_xml(__DIR__.'/data/quiz.xml'); $questions=$xml->question; $submitted=$_SERVER['REQUEST_METHOD']==='POST'; $score=0; $answered=[];
-    if($submitted){verify_csrf();foreach($questions as $i=>$q){$a=$_POST['q'.$i]??null;$answered[$i]=$a;if($a!==null && (string)$a===(string)$q->answer)$score++;}}
-    ob_start(); ?><section class="section"><div class="container" style="max-width:900px"><span class="eyebrow">Interactive XML quiz</span><h1>Cyber Safety Challenge</h1><p class="muted">Questions are loaded from XML and evaluated by PHP.</p><?php if($submitted):?><div class="card"><div class="center"><div class="stat"><?=$score?> / <?=count($questions)?></div><h3><?= $score>=4?'Excellent awareness!':($score>=3?'Good job — review the missed topics.':'Keep learning — repeat the challenge after reviewing the guide.')?></h3><a class="btn primary" href="index.php?page=quiz">Try again</a></div></div><?php endif;?><form id="quizForm" method="post" class="form" <?= $submitted?'style="display:none"':'' ?>><input type="hidden" name="csrf" value="<?=e(csrf_token())?>"><div class="progress" id="quizProgress"><span></span></div><?php foreach($questions as $i=>$q):?><div class="card question-block"><div class="small muted">Question <?=$i+1?> of <?=count($questions)?></div><h3><?=e((string)$q->text)?></h3><?php foreach($q->option as $j=>$op):?><label class="quiz-option"><input required type="radio" name="q<?=$i?>" value="<?=$j?>"> <?=e((string)$op)?></label><?php endforeach;?></div><?php endforeach;?><button class="btn primary" type="submit">Submit quiz</button></form></div></section><?php $c=ob_get_clean(); h('Cyber Safety Quiz',$c); exit;
+    // Load the quiz from XML and convert every question/option to regular
+    // PHP arrays. SimpleXML foreach keys can be strings (for example "question"),
+    // so using those keys in arithmetic such as $i + 1 can throw a TypeError.
+    $xml = load_xml(__DIR__ . '/data/quiz.xml');
+    $questions = [];
+
+    foreach ($xml->question as $questionNode) {
+        $options = [];
+        foreach ($questionNode->option as $optionNode) {
+            $options[] = (string) $optionNode;
+        }
+
+        $questions[] = [
+            'text' => (string) $questionNode->text,
+            'options' => $options,
+            'answer' => (int) trim((string) $questionNode->answer),
+        ];
+    }
+
+    $submitted = $_SERVER['REQUEST_METHOD'] === 'POST';
+    $score = 0;
+
+    if ($submitted) {
+        verify_csrf();
+
+        foreach ($questions as $index => $question) {
+            $postedAnswer = $_POST['q' . $index] ?? null;
+
+            // Accept only numeric option indexes and compare as integers.
+            if (
+                $postedAnswer !== null &&
+                is_scalar($postedAnswer) &&
+                ctype_digit((string) $postedAnswer) &&
+                (int) $postedAnswer === $question['answer']
+            ) {
+                $score++;
+            }
+        }
+    }
+
+    $questionCount = count($questions);
+
+    ob_start();
+    ?>
+    <section class="section">
+        <div class="container" style="max-width:900px">
+            <span class="eyebrow">Interactive XML quiz</span>
+            <h1>Cyber Safety Challenge</h1>
+            <p class="muted">Questions are loaded from XML and evaluated by PHP.</p>
+
+            <?php if ($submitted): ?>
+                <div class="card">
+                    <div class="center">
+                        <div class="stat"><?= $score ?> / <?= $questionCount ?></div>
+                        <h3>
+                            <?= $score >= 4
+                                ? 'Excellent awareness!'
+                                : ($score >= 3
+                                    ? 'Good job — review the missed topics.'
+                                    : 'Keep learning — repeat the challenge after reviewing the guide.') ?>
+                        </h3>
+                        <a class="btn primary" href="index.php?page=quiz">Try again</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!$submitted): ?>
+                <form id="quizForm" method="post" class="form">
+                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+                    <div class="progress" id="quizProgress"><span></span></div>
+
+                    <?php foreach ($questions as $index => $question): ?>
+                        <div class="card question-block">
+                            <div class="small muted">
+                                Question <?= $index + 1 ?> of <?= $questionCount ?>
+                            </div>
+                            <h3><?= e($question['text']) ?></h3>
+
+                            <?php foreach ($question['options'] as $optionIndex => $optionText): ?>
+                                <label class="quiz-option">
+                                    <input
+                                        required
+                                        type="radio"
+                                        name="q<?= $index ?>"
+                                        value="<?= $optionIndex ?>"
+                                    >
+                                    <?= e($optionText) ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endforeach; ?>
+
+                    <button class="btn primary" type="submit">Submit quiz</button>
+                </form>
+            <?php endif; ?>
+        </div>
+    </section>
+    <?php
+    $content = ob_get_clean();
+    h('Cyber Safety Quiz', $content);
+    exit;
 }
 
 if ($page === 'report') {
